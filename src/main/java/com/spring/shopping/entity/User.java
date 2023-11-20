@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import java.util.Date;
+import java.util.List;
+
 @Data
 @TableName("user")
 public class User {
@@ -12,7 +15,8 @@ public class User {
     private int id;
     private String username;
     private String password;
-    private String birthday;
-    private int quantity;
+    private Date birthday;
+
+    private List<Role> roleList;
 
 }

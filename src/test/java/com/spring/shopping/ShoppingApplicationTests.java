@@ -1,7 +1,9 @@
 package com.spring.shopping;
 
 import com.spring.shopping.entity.Order;
+import com.spring.shopping.entity.User;
 import com.spring.shopping.mapper.OrderMapper;
+import com.spring.shopping.mapper.UserMapper;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -76,6 +78,27 @@ class ShoppingApplicationTests {
 		if (orderMapper.updateOrderById(newOrder) == 1) {
 			System.out.println("update succeed!");
 		}
+	}
+	/**----------------------------------*/
+	@Autowired
+	UserMapper userMapper;
+	@Test
+	public void testSelectUserAndRole() throws IOException{
+		String username = "Lucy";
+		String roleType = "user";
+		List<User> userList1 = userMapper.selectUserAndRole(username, null);
+		for(User user:userList1) {
+			System.out.println(user);
+		}
+		List<User> userList2 = userMapper.selectUserAndRole(null, roleType);
+		for(User user:userList2) {
+			System.out.println(user);
+		}
+		List<User> userList3 = userMapper.selectUserAndRole(username, roleType);
+		for(User user:userList3) {
+			System.out.println(user);
+		}
+
 	}
 
 }
