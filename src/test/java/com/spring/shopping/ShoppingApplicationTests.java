@@ -1,5 +1,6 @@
 package com.spring.shopping;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.spring.shopping.entity.Order;
 import com.spring.shopping.entity.User;
 import com.spring.shopping.mapper.OrderMapper;
@@ -27,14 +28,18 @@ class ShoppingApplicationTests {
 	private OrderMapper orderMapper;
 	@Test
 	public void testSelectOrder() throws IOException, ParseException {
+		int pageNo = 0;
+		int pageSize = 10;
+		Page<Order> page = new Page<>(pageNo, pageSize);
 
-		List<Order> orderList = orderMapper.selectOrder(
+		Page<Order> orderPage = orderMapper.selectOrder(
 				"i"
 				, "s"
 				,dateFormat.parse("2020-01-01 00:00:00")
-				, dateFormat.parse("2020-12-31 23:59:59"));
+				, dateFormat.parse("2020-12-31 23:59:59")
+				,page);
 
-		System.out.println(orderList);
+		System.out.println(orderPage);
 	}
 
 	@Test
@@ -100,5 +105,12 @@ class ShoppingApplicationTests {
 		}
 
 	}
+	@Test
+	public void testSelectUserByUsername() throws IOException{
+		System.out.println(userMapper.selectUserByUsername("Alice"));
+
+	}
+
+
 
 }
