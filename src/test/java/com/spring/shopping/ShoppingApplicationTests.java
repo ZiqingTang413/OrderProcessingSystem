@@ -20,6 +20,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Optional;
 
 @SpringBootTest
 class ShoppingApplicationTests {
@@ -107,8 +108,20 @@ class ShoppingApplicationTests {
 	}
 	@Test
 	public void testSelectUserByUsername() throws IOException{
-		System.out.println(userMapper.selectUserByUsername("Alice"));
+		Optional<User> opt = userMapper.selectUserByUsername("Andy");
+		if (opt.isEmpty()) {
+			throw new RuntimeException("no user found");
+		}
+		User user = opt.get();
+		System.out.println(user);
 
+	}
+
+	@Test
+	public void testSelectUserRoleByUsername() {
+		// get role of the user from database
+		User newUser = userMapper.selectUserRoleByUsername("Jacob");
+		System.out.println(newUser);
 	}
 
 

@@ -1,8 +1,10 @@
 package com.spring.shopping.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,12 +31,19 @@ public class User implements UserDetails {
     private String password;
     private Date birthday;
 
-    private List<Role> roleList = new ArrayList<>();
+    private List<String> roleList = new ArrayList<>();
+    @JSONField(serialize = false)
+    private List<SimpleGrantedAuthority> authorities;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<SimpleGrantedAuthority> authorityList = this.roleList.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getRoleType()))
+        if(authorities!=null) {
+            return authorities;
+        }
+        List<SimpleGrantedAuthority> authorityList = this.roleList
+                .stream()
+                .map(role -> new SimpleGrantedAuthority(role))
                 .collect(Collectors.toList());
         return authorityList;
     }

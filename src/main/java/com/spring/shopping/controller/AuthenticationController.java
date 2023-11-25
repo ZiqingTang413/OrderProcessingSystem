@@ -1,6 +1,8 @@
 package com.spring.shopping.controller;
 
+import com.spring.shopping.entity.User;
 import com.spring.shopping.service.AuthenticationService;
+import com.spring.shopping.util.ResponseRestful;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,17 +18,19 @@ public class AuthenticationController {
     @Autowired
     private final AuthenticationService authenticationService;
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(
+    public ResponseRestful register(
             @RequestBody RegisterRequest request
     ){
-        return ResponseEntity.ok(authenticationService.register(request));
+        return authenticationService.register(request);
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(
+    public ResponseRestful authenticate(
             @RequestBody AuthenticateRequest request
     ){
-        return ResponseEntity.ok(authenticationService.authenticate(request));
+        return authenticationService.authenticate(request);
     }
+
+
 
 }

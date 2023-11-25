@@ -1,6 +1,9 @@
 package com.spring.shopping.configuration;
 
+import com.spring.shopping.entity.User;
 import com.spring.shopping.service.JwtService;
+import com.spring.shopping.service.UserDetailsServiceImpl;
+import com.spring.shopping.util.RedisCache;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,13 +20,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Objects;
+
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private JwtService jwtService;
+
     @Autowired
-    private UserDetailsService userDetailsService;
+    private RedisCache redisCache;
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request
@@ -42,15 +48,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         userName = jwtService.extractUsername(jwtToken);
         // username exists but has not Authenticated(is logged in)
         if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // load user from the database by username
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
-
-            if(jwtService.isTokenValid(jwtToken, userDetails)) {
+            // load user from Redis
+            User user = redisCache.getCacheObject("login"+userName);
+            if (Objects.isNull(user)) {
+                throw new RuntimeException("User has not logged in");
+            }
+            // if token has not expired
+            if(!jwtService.isTokenExpired(jwtToken)) {
+                // store user into SecurityContextHolder
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
+                        user,
                         null,
-                        userDetails.getAuthorities()
+                        user.getAuthorities()
                 );
+                // optional
                 authToken.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request)
                 );
